@@ -1,0 +1,4 @@
+Bundle-Name: ExampleCollectionProvider
+Bundle-SymbolicName: examplecollectionprovider
+Bundle-Version: 1.0.0
+Export-Package: examplecollectionprovider.api
