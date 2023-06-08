@@ -27,6 +27,8 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 
+import com.liferay.info.item.InfoItemServiceRegistry;
+
 import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.info.pagination.Pagination;
@@ -39,6 +41,7 @@ import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 
 import java.util.Collections;
 import java.util.Locale;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -47,7 +50,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Pavel Savinov
  */
 @Component(service = InfoCollectionProvider.class)
-public class ExampleCollectionProvider
+public class ExampleOffsetCollectionProvider
 	implements InfoCollectionProvider<AssetEntry> {
 
 	@Override
@@ -63,8 +66,13 @@ public class ExampleCollectionProvider
 			new Sort("title", true));
 
 		try {
+
+			List<AssetEntry> allAssets = _assetEntryService.getEntries(assetEntryQuery);
+			List<AssetEntry> firstAssets = (List<AssetEntry>) allAssets.subList(0, 3);
+			firstAssets.clear();
+
 			return InfoPage.of(
-				_assetEntryService.getEntries(assetEntryQuery),
+				allAssets,
 				collectionQuery.getPagination(),
 				_assetEntryService.getEntriesCount(assetEntryQuery));
 		}
@@ -129,7 +137,7 @@ public class ExampleCollectionProvider
 
 	@Override
 	public String getLabel(Locale locale) {
-		return "NEW COLLECTION PROVIDER";
+		return "OFFSET 3 COLLECTION PROVIDER";
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -140,5 +148,8 @@ public class ExampleCollectionProvider
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 }
